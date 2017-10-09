@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Editable Content</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  <style>
+    body {
+      margin: 20px;
+    }
+
+    p {
+      font-size: 1.5em;
+    }
+
+    h3 {
+      text-align: center;
+    }
+
+    #button-row {
+      margin-top: 10px;
+    }
+
+    #editor,
+    #container {
+      padding: 10px;
+      border: 1px solid black;
+    }
+
+    #editor p {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>Editable Content</h3>
+  <br />
+  <div class="row">
+    <div class="col m6">
+      <h3>Editor</h3>
+      <div id="reference">
+        <div contenteditable="true" id="editor">
+          <p>Enter your text here and use buttons below to style, show code and preview output.</p>
+          <p>To use font colours, first choose colours in the palette, then highlight text and click the foreground or background button, or both.</p>
+        </div>
+      </div>
+
+      <div id="button-row" class="row center-align">
+        <button class="btn-flat" onclick="ToggleBold ();"><i class="material-icons">format_bold</i></button>
+        <button class="btn-flat" onclick="ToggleItalic ();"><i class="material-icons">format_italic</i></button>
+        <button class="btn-flat" onclick="ToggleUnderline ();"><i class="material-icons">format_underlined</i></button>
+
+        <button id="foreColorBtn" class="btn grey" onclick="changeColor ();"><i class="material-icons">format_color_text</i></button>
+        <button id="backColorBtn" class="btn grey" onclick="changeBackColor ();"><i class="material-icons">format_color_fill</i></button>
+        <!-- <button class="btn" onclick="Delete ();">Del</button> -->
+        <button class="btn-flat" onclick="Inspect ();"><i class="material-icons">code</i></button>
+        <button class="btn-flat" onclick="Preview ();"><i class="material-icons">visibility</i></button>
+      </div>
+
+      <div id="color-pickers" class="row card-panel">
+        <div class="col m4">
+          <label for="fontColor">Font Color</label>
+          <input id="fontColor" class="jscolor" onchange="updateFontColor(this.jscolor)" value="000000">
+        </div>
+        <div class="col m4">
+          <label for="backColor">Font Highlight Color</label>
+          <input id="backColor" class="jscolor" onchange="updateBackColor(this.jscolor)" value="ffffff">
+        </div>
+        <div class="col m4">
+          <label for="backColor">Background Color</label>
+          <input id="backgroundColor" class="jscolor" onchange="changeBackgroundColor(this.jscolor)" value="ffffff">
+        </div>
+      </div>
+
+    </div>
+    <div class="col m6">
+      <h3>Output</h3>
+      <div id="container"></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.0.4/jscolor.min.js"></script>
+
+  <script type="text/javascript">
+    document.execCommand("DefaultParagraphSeparator", false, "p");
+    // Editor
+    var fontColor = '#000000';
+    var backColor = '#ffffff';
+    var backgroundColor = '#ffffff';
+
+    function ToggleBold() {
+      document.execCommand('bold', false, null);
+    }
+    function ToggleItalic() {
+      document.execCommand('italic', false, null);
+    }
+    function ToggleUnderline() {
+      document.execCommand('underline', false, null);
+    }
+    function updateFontColor(color) {
+      fontColor = '#' + color;
+      document.getElementById('foreColorBtn').style.color = fontColor;
+    }
+    function updateBackColor(color) {
+      backColor = '#' + color;
+      document.getElementById('backColorBtn').style.color = backColor;
+    }
+    function changeColor() {
+      console.log(fontColor);
+      document.execCommand('foreColor', false, fontColor);
+    }
+    function changeBackColor() {
+      console.log(backColor);
+      document.execCommand('backColor', false, backColor);
+    }
+    function changeBackgroundColor(color) {
+      backgroundColor = '#' + color;
+      console.log(backgroundColor);
+      document.getElementById('editor').style.backgroundColor = backgroundColor;
+    }
+    function Delete() {
+      document.execCommand('delete', false, null);
+    }
+
+    // Output
+    function Inspect() {
+      var newDocFrag = document.createDocumentFragment();
+      var fragment = document.getElementById('reference').innerHTML;
+      console.log(fragment);
+      var newText = document.createTextNode(fragment);
+      newDocFrag.appendChild(newText);
+      document.getElementById('container').style.backgroundColor = '#ffffff';
+      document.getElementById('container').style.fontSize = '24px';
+      var container = document.getElementById("container");
+      container.innerHTML = "";
+      container.appendChild(newText);
+    }
+
+    function Preview() {
+      var fragment = document.getElementById('editor').innerHTML;
+      console.log(fragment);
+      document.getElementById('container').style.backgroundColor = backgroundColor;
+      var container = document.getElementById("container");
+      container.innerHTML = "";
+      container.innerHTML = fragment;
+    }
+  </script>
+</body>
+
+</html>
