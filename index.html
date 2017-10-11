@@ -10,12 +10,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
   <style>
     body {
-      margin: 20px;
+      display: flex;
+      margin: 0 20px;
     }
 
-    p {
+    /* p {
+      margin: 0;
       font-size: 1.5em;
-    }
+    } */
 
     h3 {
       text-align: center;
@@ -31,54 +33,72 @@
       border: 1px solid black;
     }
 
-    #editor p {
+    #editor p,
+    #container p {
       margin: 0;
+      font-size: 1.5em;
+    }
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 
 <body>
-  <h3>Editable Content</h3>
-  <br />
   <div class="row">
     <div class="col m6">
       <h3>Editor</h3>
       <div id="reference">
         <div contenteditable="true" id="editor">
           <p>Enter your text here and use buttons below to style, show code and preview output.</p>
-          <p>To use font colours, first choose colours in the palette, then highlight text and click the foreground or background button, or both.</p>
+          <p>To use font colours, first choose colours in the palette, then highlight text and click the foreground or background
+            button, or both.</p>
         </div>
       </div>
 
       <div id="button-row" class="row center-align">
-        <button class="btn-flat" onclick="ToggleBold ();"><i class="material-icons">format_bold</i></button>
-        <button class="btn-flat" onclick="ToggleItalic ();"><i class="material-icons">format_italic</i></button>
-        <button class="btn-flat" onclick="ToggleUnderline ();"><i class="material-icons">format_underlined</i></button>
+        <button class="btn-flat" onclick="ToggleBold ();">
+          <i class="material-icons">format_bold</i>
+        </button>
+        <button class="btn-flat" onclick="ToggleItalic ();">
+          <i class="material-icons">format_italic</i>
+        </button>
+        <button class="btn-flat" onclick="ToggleUnderline ();">
+          <i class="material-icons">format_underlined</i>
+        </button>
 
-        <button id="foreColorBtn" class="btn grey" onclick="changeColor ();"><i class="material-icons">format_color_text</i></button>
-        <button id="backColorBtn" class="btn grey" onclick="changeBackColor ();"><i class="material-icons">format_color_fill</i></button>
+        <button id="foreColorBtn" class="btn grey" onclick="changeColor ();">
+          <i class="material-icons">format_color_text</i>
+        </button>
+        <button id="backColorBtn" class="btn grey" onclick="changeBackColor ();">
+          <i class="material-icons">format_color_fill</i>
+        </button>
         <!-- <button class="btn" onclick="Delete ();">Del</button> -->
-        <button class="btn-flat" onclick="Inspect ();"><i class="material-icons">code</i></button>
-        <button class="btn-flat" onclick="Preview ();"><i class="material-icons">visibility</i></button>
+        <button class="btn-flat" onclick="Inspect ();">
+          <i class="material-icons">code</i>
+        </button>
+        <button class="btn-flat" onclick="Preview ();">
+          <i class="material-icons">visibility</i>
+        </button>
       </div>
 
       <div id="color-pickers" class="row card-panel">
         <div class="col m4">
-          <label for="fontColor">Font Color</label>
-          <input id="fontColor" class="jscolor" onchange="updateFontColor(this.jscolor)" value="000000">
+          <label for="fontColor">Font</label>
+          <input id="fontColor" class="jscolor input-field" onchange="updateFontColor(this.jscolor)" value="000000">
         </div>
         <div class="col m4">
-          <label for="backColor">Font Highlight Color</label>
-          <input id="backColor" class="jscolor" onchange="updateBackColor(this.jscolor)" value="ffffff">
+          <label for="backColor">Highlight</label>
+          <input id="backColor" class="jscolor input-field" onchange="updateBackColor(this.jscolor)" value="ffffff">
         </div>
         <div class="col m4">
-          <label for="backColor">Background Color</label>
-          <input id="backgroundColor" class="jscolor" onchange="changeBackgroundColor(this.jscolor)" value="ffffff">
+          <label for="backgroundColor">Background</label>
+          <input id="backgroundColor" class="jscolor input-field" onchange="changeBackgroundColor(this.jscolor)" value="ffffff">
         </div>
       </div>
 
     </div>
-    <div class="col m6">
+    <div id="output" class="col m6 hidden">
       <h3>Output</h3>
       <div id="container"></div>
     </div>
@@ -88,10 +108,14 @@
 
   <script type="text/javascript">
     document.execCommand("DefaultParagraphSeparator", false, "p");
+    document.execCommand('styleWithCSS', false, true);
     // Editor
     var fontColor = '#000000';
     var backColor = '#ffffff';
     var backgroundColor = '#ffffff';
+    var output = document.getElementById('output');
+    var outputWindow = document.getElementById('container');
+    var editorWindow = document.getElementById('editor');
 
     function ToggleBold() {
       document.execCommand('bold', false, null);
@@ -102,6 +126,9 @@
     function ToggleUnderline() {
       document.execCommand('underline', false, null);
     }
+    // TODO - add text alignment -execCommand
+    // TODO - add undo / redo - execCommand
+    // TODO - removeFormat from selection - execCommand
     function updateFontColor(color) {
       fontColor = '#' + color;
       document.getElementById('foreColorBtn').style.color = fontColor;
@@ -121,7 +148,7 @@
     function changeBackgroundColor(color) {
       backgroundColor = '#' + color;
       console.log(backgroundColor);
-      document.getElementById('editor').style.backgroundColor = backgroundColor;
+      editorWindow.style.backgroundColor = backgroundColor;
     }
     function Delete() {
       document.execCommand('delete', false, null);
@@ -132,22 +159,24 @@
       var newDocFrag = document.createDocumentFragment();
       var fragment = document.getElementById('reference').innerHTML;
       console.log(fragment);
+
       var newText = document.createTextNode(fragment);
       newDocFrag.appendChild(newText);
-      document.getElementById('container').style.backgroundColor = '#ffffff';
-      document.getElementById('container').style.fontSize = '24px';
-      var container = document.getElementById("container");
-      container.innerHTML = "";
-      container.appendChild(newText);
+
+      outputWindow.style.backgroundColor = '#ffffff';
+      // outputWindow.style.fontSize = '24px';
+      output.style.display = 'block';
+      outputWindow.innerHTML = "";
+      outputWindow.appendChild(newText);
     }
 
     function Preview() {
-      var fragment = document.getElementById('editor').innerHTML;
+      var fragment = editorWindow.innerHTML;
       console.log(fragment);
-      document.getElementById('container').style.backgroundColor = backgroundColor;
-      var container = document.getElementById("container");
-      container.innerHTML = "";
-      container.innerHTML = fragment;
+      output.style.display = 'block';
+      outputWindow.style.backgroundColor = backgroundColor;
+      outputWindow.innerHTML = "";
+      outputWindow.innerHTML = fragment;
     }
   </script>
 </body>
