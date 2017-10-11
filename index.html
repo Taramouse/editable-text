@@ -80,6 +80,9 @@
         <button class="btn-flat" onclick="Preview ();">
           <i class="material-icons">visibility</i>
         </button>
+        <button class="btn-flat" onclick="save ();">
+          <i class="material-icons">save</i>
+        </button>
       </div>
 
       <div id="color-pickers" class="row card-panel">
@@ -105,10 +108,12 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jscolor/2.0.4/jscolor.min.js"></script>
+  <script src="save-page.js"></script>
 
   <script type="text/javascript">
     document.execCommand("DefaultParagraphSeparator", false, "p");
     document.execCommand('styleWithCSS', false, true);
+
     // Editor
     var fontColor = '#000000';
     var backColor = '#ffffff';
@@ -153,7 +158,11 @@
     function Delete() {
       document.execCommand('delete', false, null);
     }
-
+    function save() {
+      var fragment = editorWindow.innerHTML;
+      var pageData = { 'html': fragment };
+      savePage('Test Page', pageData);
+    }
     // Output
     function Inspect() {
       var newDocFrag = document.createDocumentFragment();
