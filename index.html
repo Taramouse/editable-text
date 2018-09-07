@@ -25,6 +25,8 @@
 
     #button-row {
       margin-top: 10px;
+      display: flex;
+      flex-direction: row;
     }
 
     #editor,
@@ -80,7 +82,7 @@
         <button class="btn-flat" onclick="Preview ();">
           <i class="material-icons">visibility</i>
         </button>
-        <button class="btn-flat" onclick="save ();">
+        <button class="btn-flat" onclick="save ();" disabled>
           <i class="material-icons">save</i>
         </button>
       </div>
