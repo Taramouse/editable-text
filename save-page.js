@@ -18,18 +18,23 @@ request.onupgradeneeded = function (event) {
 
   // Create an objectStore for this database (destructive)
   // TODO: Implement a way to store the saved page data before upgrade.
-  objectStore = db.createObjectStore("pageName", { keyPath: "pageData" });
+  objectStore = db.createObjectStore(dbName, { keyPath: "pageName" });
 };
 
 function savePage(name, data) {
   this.pageName = name;
   this.pageData = data;
 
-  var transaction = db.transaction(["pageName"], "readwrite");
+  var transaction = db.transaction([dbName], "readwrite");
 
-  // Do something when all the data is added to the database.
-  transaction.oncomplete = function (event) {
-    console.log('Page Saved.');
+  var pageData = [
+    { pageName: this.pageName, pageData: this.pageData }
+  ];
+
+  var request = objectStore.add(pageData);
+
+  request.onsuccess = function (event) {
+    event.target.result == pageName;
   };
 
   transaction.onerror = function (event) {
@@ -37,15 +42,8 @@ function savePage(name, data) {
     console.log('Aaaaw snap, page not saved.');
   };
 
-  var pageData = [
-    { pageName: this.pageName, pageData: this.pageData }
-  ];
-
-  console.log(pageData);
-
-  var request = objectStore.add(pageData);
-
-  request.onsuccess = function (event) {
-    event.target.result == pageName;
+  // Do something when all the data is added to the database.
+  transaction.oncomplete = function (event) {
+    console.log('Page Saved.')
   };
 }
